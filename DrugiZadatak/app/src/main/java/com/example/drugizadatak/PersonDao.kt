@@ -1,9 +1,6 @@
 package com.example.drugizadatak
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface PersonDao{
@@ -12,6 +9,9 @@ interface PersonDao{
 
     @Delete
     fun delete(person: InspiringPerson);
+
+    @Update
+    fun update(person: InspiringPerson)
 
     @Query("SELECT * FROM persons")
     fun getAll(): List<InspiringPerson>;

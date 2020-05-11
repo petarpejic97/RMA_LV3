@@ -17,7 +17,6 @@ class InspiringPersonAdapter(persons: MutableList<InspiringPerson>,
     private val personListener : PersonInteractionListener
 
     init {
-        Log.w("USAO","OVDJE NECE")
         this.persons = mutableListOf()
         this.persons.addAll(persons)
         this.personListener= personListener

@@ -1,6 +1,5 @@
 package com.example.drugizadatak.Fragments
 
-
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -14,21 +13,29 @@ import kotlinx.android.synthetic.main.fragment_add_new.view.*
 import android.widget.Toast
 import com.example.drugizadatak.*
 
-class FragmentAddNew : Fragment() {
+class FragmentAddNew : Fragment(),OnLongTouchListener {
+
     val personDao = PersonDatabase.getInstance().personDao()
     protected lateinit var rootView: View
     lateinit var btnAdd: Button
     private var updateFlag = false
     private var updatePersonId = 0
+    private var mMain: MainActivity? = null
 
     companion object {
         fun newInstance(): FragmentAddNew{
             return FragmentAddNew()
         }
     }
+    override fun setFieldsForUpdate(id: Int) {
+        Log.w("DODEM","DODEM")
+        fillFields(id)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_add_new, container, false)
         onClickAdd()
+        mMain?.setOnUpdating(this)
         return rootView
     }
 
@@ -53,14 +60,15 @@ class FragmentAddNew : Fragment() {
 
             if(updateFlag){
                 val person = InspiringPerson(updatePersonId, imglink, fullname, birth, descripton, statements)
-                personDao.insert(person)
+                addPersonInList(person)
                 resetFields()
-                updatePersonId = 0
+                Toast.makeText(activity,"Person ${person.fullName} updated!",Toast.LENGTH_LONG).show()
             }
             else{
                 val id : Int = personDao.getMaxId()+1
                 val person = InspiringPerson(id, imglink, fullname, birth, descripton, statements)
-                personDao.insert(person)
+                addPersonInList(person)
+                Toast.makeText(activity,"Person ${person.fullName} added!",Toast.LENGTH_LONG).show()
                 resetFields()
             }
 
@@ -73,26 +81,33 @@ class FragmentAddNew : Fragment() {
         rootView.edLinkImage.text = Editable.Factory.getInstance().newEditable("")
         rootView.edStatements.text = Editable.Factory.getInstance().newEditable("")
     }
-    /*private fun fillFields(id : Int){
-        val person = PeopleRepository.get(id)
+    private fun fillFields(id : Int){
+        val person = personDao.getById(id)
         updatePersonId = id
         Log.w("ID",id.toString())
-            rootView.edFullname.text = Editable.Factory.getInstance().newEditable(person?.fullName)
-            rootView.edBirth.text = Editable.Factory.getInstance().newEditable(person?.birth)
-            rootView.edDescription.text = Editable.Factory.getInstance().newEditable(person?.descripton)
-            rootView.edLinkImage.text = Editable.Factory.getInstance().newEditable(person?.image)
-            rootView.edStatements.text = Editable.Factory.getInstance().newEditable(person?.statements)
+            rootView.edFullname.text = Editable.Factory.getInstance().newEditable(person.fullName)
+            rootView.edBirth.text = Editable.Factory.getInstance().newEditable(person.birth)
+            rootView.edDescription.text = Editable.Factory.getInstance().newEditable(person.descripton)
+            rootView.edLinkImage.text = Editable.Factory.getInstance().newEditable(person.image)
+            rootView.edStatements.text = Editable.Factory.getInstance().newEditable(person.statements)
 
             updateFlag = true
     }
     private fun addPersonInList(person: InspiringPerson) {
 
         if(!updateFlag)
-            PeopleRepository.add(person)
+            personDao.insert(person)
         else {
             updateFlag = false
-            PeopleRepository.update(person)
+            personDao.update(person)
         }
-    }*/
+    }
+    override fun onAttach(a: Context) {
+        super.onAttach(a)
+        mMain = a as MainActivity
+    }
 
+    override fun onDetach() {
+        super.onDetach()
+    }
 }

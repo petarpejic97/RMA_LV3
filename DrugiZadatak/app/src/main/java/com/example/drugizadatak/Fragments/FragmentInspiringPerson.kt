@@ -1,8 +1,6 @@
 package com.example.drugizadatak.Fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +10,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.viewpager.widget.ViewPager
 import com.example.drugizadatak.*
-import kotlinx.android.synthetic.main.item_person.*
-import kotlinx.android.synthetic.main.item_person.view.*
 
 
 class FragmentInspiringPerson : Fragment(){
@@ -35,10 +27,14 @@ class FragmentInspiringPerson : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_inspiring_person, container, false)
         initView()
+        initMain()
         return rootView
     }
     private fun initView(){
         initializeRecyclerView()
+    }
+    private fun initMain() {
+        mMain = activity as MainActivity?
     }
 
     private fun initializeRecyclerView(){
@@ -72,6 +68,7 @@ class FragmentInspiringPerson : Fragment(){
                 )
             }
             override fun updatePerson(id: Int) {
+                mMain?.getUpdataId(id)
             }
         }
         peopleDisplay.adapter = InspiringPersonAdapter(
